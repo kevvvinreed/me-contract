@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+
+jobs:
+  unit_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: cd cosign-server && npm ci
+      - run: npm run build
+      - run: npm run lint
+      - name: Run Coverage and Upload to CodeCov
+        run: |
+          npm run coverage; \
+          curl -Os https://uploader.codecov.io/latest/linux/codecov; \
+          chmod +x codecov; \
+          ./codecov;
+  slither:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: crytic/slither-action@35510b34cfdfb137d9816d27378ee8c217f1fa1c
+        with:
+          fail-on: low
+          slither-version: d8e526e53ff690bd24c260042117efab5ce9c271
+          slither-args: "--exclude-dependencies"
