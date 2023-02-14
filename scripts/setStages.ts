@@ -22,8 +22,7 @@ export const setStages = async (
   hre: HardhatRuntimeEnvironment,
 ) => {
   const { ethers } = hre;
-  const stagesConfig = JSON.parse(
-    // fs.readFileSync(args.stages, 'utf-8'),
+  const stagesConfig = JSON.parse( 
     args.stages
   ) as StageConfig[];
   const ERC721M = await ethers.getContractFactory(ContractDetails.ERC721M.name);

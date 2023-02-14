@@ -1,8 +1,9 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
+// import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deploy, IDeployParams } from './deploy';
+import { IMintParams, mint } from './mint';
 import { setStages, ISetStagesParams, StageConfig } from './setStages';
 
-async function index(opt: 'deploy' | 'setStages') {
+async function index(opt: 'deploy' | 'setStages' | 'mint') {
   switch (opt) {
     case 'deploy': {
       const args: IDeployParams = {
@@ -17,7 +18,7 @@ async function index(opt: 'deploy' | 'setStages') {
       return;
     }
     case 'setStages': {
-      const day = 86400;
+      const day = 86400000;
       const now = Date.now();
       const stages: StageConfig[] = [
         {
@@ -25,22 +26,17 @@ async function index(opt: 'deploy' | 'setStages') {
           startDate: now,
           endDate: now + day,
           whitelistPath: './config/whitelist.json',
-          maxSupply: 10,
+          maxSupply: 100,
           walletLimit: 1,
         },
         {
           price: '0.001',
-          startDate: now + day,
+          startDate: now + day + 300000, // Minimum 5 minute separation
           endDate: now + day * 2,
           whitelistPath: './config/whitelist2.json',
-          maxSupply: 10,
+          maxSupply: 100,
           walletLimit: 1,
         },
-        // {
-        //   price: '0.001',
-        //   startDate: now + day * 2,
-        //   endDate: now + day * 3,
-        // },
       ];
 
       const args: ISetStagesParams = {
@@ -52,7 +48,17 @@ async function index(opt: 'deploy' | 'setStages') {
 
       return;
     }
+    case 'mint': {
+      const args: IMintParams = {
+        contract: process.env.CONTRACT_ADDRESS || '',
+        minttime: Date.now(),
+        quantity: '1',
+      };
+
+      await mint(args, hre);
+      return;
+    }
   }
 }
 
-index('setStages');
+index('mint');
