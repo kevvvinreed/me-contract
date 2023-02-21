@@ -66,4 +66,6 @@ export const deploy = async (
   await erc721M.deployed();
 
   console.log(`${contractName} deployed to:`, erc721M.address);
+  
+  return erc721M.address;
 };
