@@ -8,8 +8,9 @@ import { arrayify } from '@ethersproject/bytes';
 import { setStages, ISetStagesParams, StageConfig } from './setStages';
 import { ISetMintableParams, setMintable } from './setMintable';
 import { ISetBaseURIParams, setBaseURI } from './setBaseURI';
+import {ISetCrossmintAddress, setCrossmintAddress} from './setCrossmintAddress';
 
-async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'setBaseURI') {
+async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'setBaseURI' | 'setCrossmintAddress') {
   switch (opt) {
     case 'deploy': {
       const args: IDeployParams = {
@@ -36,6 +37,13 @@ async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'set
       };
 
       await setMintable(mintableArgs, hre);
+
+      
+      const crossmintArgs: ISetCrossmintAddress = {
+        crossmintaddress: '0xdAb1a1854214684acE522439684a145E62505233',
+        contract: process.env.CONTRACT_ADDRESS || ''
+      }
+      await setCrossmintAddress(crossmintArgs, hre);
 
       const stageArgs: ISetStagesParams = {
         stages: stages,
@@ -87,7 +95,16 @@ async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'set
       await setBaseURI(args, hre);
       return;
     }
+    case 'setCrossmintAddress': {
+
+      const args: ISetCrossmintAddress = {
+        crossmintaddress: '0xdAb1a1854214684acE522439684a145E62505233',
+        contract: process.env.CONTRACT_ADDRESS || ''
+      }
+      await setCrossmintAddress(args, hre);
+      return;
+    }
   }
 }
 
-index('setBaseURI');
+index('setStages');
