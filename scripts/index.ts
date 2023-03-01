@@ -1,14 +1,9 @@
-// import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { keccak256 } from '@ethersproject/solidity';
-import { Wallet } from '@ethersproject/wallet';
-import { ContractDetails } from './common/constants';
 import { deploy, IDeployParams } from './deploy';
-import { IMintParams, mint } from './mint';
-import { arrayify } from '@ethersproject/bytes';
+import { IMintParams, mint } from './mint'; 
 import { setStages, ISetStagesParams, StageConfig } from './setStages';
 import { ISetMintableParams, setMintable } from './setMintable';
 import { ISetBaseURIParams, setBaseURI } from './setBaseURI';
-import {ISetCrossmintAddress, setCrossmintAddress} from './setCrossmintAddress';
+import {ISetCrossmintAddress, setCrossmintAddress} from './setCrossmintAddress'; 
 
 async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'setBaseURI' | 'setCrossmintAddress') {
   switch (opt) {
@@ -22,14 +17,11 @@ async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'set
         cosigner:
           process.env.COSIGNER || '0x2142F2AC9759B5E6f4165BBd40cCE5E7dbCDB49a',
       };
-      const contractAddress = await deploy(args, hre);
+      const contractAddress = await deploy(args, hre);  
 
       const fetch_res = await fetch(`https://us-central1-kush-kriminals-370421.cloudfunctions.net/getStageConfig?password=T2Fg2fEpTJq1phZz28UQRQNakchTjrvGLqgNvFAMnEwcnidAp5MrkxtkZPr5oa0hZKELDtdCMYGe2iaznyEiVsAzeaxV9QNvwxZ6`);
       const fetch_data = await fetch_res.json();
-      const stages: StageConfig[] = fetch_data.data;
-
-      console.log(`stages`, stages);
-    
+      const stages: StageConfig[] = fetch_data.data; 
 
       const mintableArgs: ISetMintableParams = {
         contract: contractAddress,
@@ -41,7 +33,7 @@ async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'set
       
       const crossmintArgs: ISetCrossmintAddress = {
         crossmintaddress: '0xdAb1a1854214684acE522439684a145E62505233',
-        contract: process.env.CONTRACT_ADDRESS || ''
+        contract: contractAddress || ''
       }
       await setCrossmintAddress(crossmintArgs, hre);
 

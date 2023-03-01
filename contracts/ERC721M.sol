@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
-import "erc721a/contracts/extensions/ERC721AQueryable.sol";
+import "erc721a/contracts/extensions/ERC721AQueryable.sol"; 
 import "./IERC721M.sol";
 
 /**
@@ -420,7 +420,7 @@ contract ERC721M is IERC721M, ERC721AQueryable, Ownable, ReentrancyGuard {
 
         MintStageInfo memory stage;
         if (_cosigner != address(0)) {
-            assertValidCosign(msg.sender, qty, timestamp, signature);
+            assertValidCosign(to, qty, timestamp, signature);
             _assertValidTimestamp(timestamp);
             stageTimestamp = timestamp;
         }
@@ -639,5 +639,5 @@ contract ERC721M is IERC721M, ERC721AQueryable, Ownable, ReentrancyGuard {
             chainID := chainid()
         }
         return chainID;
-    }
+    } 
 }

@@ -24,7 +24,7 @@ interface IERC721M is IERC721AQueryable {
     error TimestampExpired();
     error WalletGlobalLimitExceeded();
     error WalletStageLimitExceeded();
-    error WithdrawFailed();
+    error WithdrawFailed(); 
 
     struct MintStageInfo {
         uint80 price;

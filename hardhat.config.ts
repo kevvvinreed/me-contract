@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import '@nomiclabs/hardhat-etherscan';
 import '@nomiclabs/hardhat-waffle';
-import "@nomiclabs/hardhat-ethers";
+import '@nomiclabs/hardhat-ethers';
 import '@typechain/hardhat';
 import 'hardhat-gas-reporter';
 import 'hardhat-watcher';
@@ -32,20 +32,23 @@ import { setPrice } from './scripts/setPrice';
 import { getPrice } from './scripts/dev/getPrice';
 import { getStartTimeBA } from './scripts/dev/getStartTimeBA';
 import { getEndTimeBA } from './scripts/dev/getEndTimeBA';
-import { getMinContributionInWei } from './scripts/dev/getMinContributionInWei'; 
+import { getMinContributionInWei } from './scripts/dev/getMinContributionInWei';
 
 // /** @type import('hardhat/config').HardhatUserConfig */
 const config: HardhatUserConfig = {
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_KEY || '',
+  },
   solidity: {
     version: '0.8.16',
     settings: {
-      optimizer: { 
+      optimizer: {
         enabled: true,
         runs: 200,
       },
     },
   },
-  defaultNetwork: "goerli",
+  defaultNetwork: 'goerli',
   paths: {
     artifacts: './artifacts',
     cache: './cache',
@@ -82,7 +85,7 @@ const config: HardhatUserConfig = {
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: 'USD',
-  } 
+  },
 };
 
 task('setStages', 'Set stages for ERC721M')
@@ -111,10 +114,7 @@ task('deploy', 'Deploy ERC721M')
     'increasesupply',
     'whether or not to enable increasing supply behavior',
   )
-  .addFlag(
-    'useoperatorfilterer',
-    'whether or not to use operator filterer',
-  )
+  .addFlag('useoperatorfilterer', 'whether or not to use operator filterer')
   .setAction(deploy);
 
 task('setBaseURI', 'Set the base uri')
