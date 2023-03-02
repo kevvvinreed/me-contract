@@ -4,12 +4,13 @@ import { setStages, ISetStagesParams, StageConfig } from './setStages';
 import { ISetMintableParams, setMintable } from './setMintable';
 import { ISetBaseURIParams, setBaseURI } from './setBaseURI';
 import {ISetCrossmintAddress, setCrossmintAddress} from './setCrossmintAddress'; 
+import { IERC20DeployParams, erc20Deploy } from './extension/ERC20Deploy';
 
-async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'setBaseURI' | 'setCrossmintAddress') {
+async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'setBaseURI' | 'setCrossmintAddress' | 'ERC20Deploy') {
   switch (opt) {
     case 'deploy': {
       const args: IDeployParams = {
-        name: 'KushTest',
+        name: 'KushTest (Unchecked Crossmint)',
         symbol: 'KST',
         tokenurisuffix: '.json',
         maxsupply: '100',
@@ -33,7 +34,7 @@ async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'set
       
       const crossmintArgs: ISetCrossmintAddress = {
         crossmintaddress: '0xdAb1a1854214684acE522439684a145E62505233',
-        contract: contractAddress || ''
+        contract: contractAddress
       }
       await setCrossmintAddress(crossmintArgs, hre);
 
@@ -96,7 +97,16 @@ async function index(opt: 'deploy' | 'setStages' | 'mint' | 'setMintable' | 'set
       await setCrossmintAddress(args, hre);
       return;
     }
+    case 'ERC20Deploy': {
+      const args: IERC20DeployParams = {
+        name: "ERC20 Test",
+        symbol: "ET",
+        maxsupply: 1000000
+      }
+
+      await erc20Deploy(args, hre);
+    }
   }
 }
 
-index('setStages');
+index('deploy');
