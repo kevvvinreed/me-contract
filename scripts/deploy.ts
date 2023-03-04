@@ -10,10 +10,10 @@ export interface IDeployParams {
   name: string;
   symbol: string;
   tokenurisuffix: string;
-  maxsupply: string;
-  globalwalletlimit: string;
+  maxsupply: number;
+  globalwalletlimit: number;
   cosigner?: string;
-  timestampexpiryseconds?: number;
+  timestampexpiryseconds: number;
   increasesupply?: boolean;
   useoperatorfilterer?: boolean;
 }

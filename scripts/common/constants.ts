@@ -6,4 +6,5 @@ export const ContractDetails = {
   ERC721MIncreasableSupply: { name: 'ERC721MIncreasableSupply' }, // ERC721M with increasable supply
   ERC721MOperatorFilterer: { name: 'ERC721MOperatorFilterer' }, // ERC721M with operator filterer
   ERC20K: { name: 'ERC20K' },
+  StakingContract: { name: 'StakingERC721ForERC20' },
 } as const;
