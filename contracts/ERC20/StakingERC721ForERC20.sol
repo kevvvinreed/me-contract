@@ -58,9 +58,10 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
 
     function stake(uint256[] calldata tokenIds) external {
         uint256 tokenId;
+        totalStaked += tokenIds.length;
         for(uint i = 0; i < tokenIds.length; i++) {
             tokenId = tokenIds[i];
-            address owner = nft.ownerOf(i);
+            address owner = nft.ownerOf(tokenId);
             
             if(owner != _msgSender()) { 
                 revert NotOwnerOfToken(owner);
