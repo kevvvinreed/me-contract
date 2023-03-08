@@ -15,10 +15,9 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
     
     uint256 rewardInterval;
     uint256 rewardAmount;
-    ERC721M nft;
     ERC20K token;
-    
-
+    ERC721M nft;
+     
     struct Stake {
         uint24 tokenId;
         uint48 stakeTimestamp;
@@ -33,9 +32,9 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
     event Claimed(address owner, uint256 amount);
 
 
-    error NotOwnerOfToken(address owner);
-    error TokenAlreadyStaked();
-    error CannotSendNFTsDirectly();
+    error NotOwnerOfToken(string message, address owner);
+    error TokenAlreadyStaked(string message);
+    error CannotSendNFTsDirectly(string message);
 
     constructor(ERC20K erc20, ERC721M erc721, uint256 _rewardInterval, uint256 _rewardAmount) { 
         token = erc20;
@@ -64,12 +63,12 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
             address owner = nft.ownerOf(tokenId);
             
             if(owner != _msgSender()) { 
-                revert NotOwnerOfToken(owner);
+                revert NotOwnerOfToken("NotOwnerOfToken", owner);
             }
-            if(vault[tokenId].tokenId != 0) {
-                revert TokenAlreadyStaked();
-            }
-
+            if(vault[tokenId].owner != address(0x0)) {
+                revert TokenAlreadyStaked("TokenAlreadyStaked");
+            } 
+            // token transfers from ERC721 contract must be approved or else this will throw an error
             nft.transferFrom(_msgSender(), address(this), tokenId);
             emit NFTStaked(_msgSender(), tokenId, block.timestamp);
 
@@ -90,7 +89,7 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
             tokenId = tokenIds[i];
             Stake memory staked = vault[tokenId];
             if(staked.owner != _msgSender()) {
-                revert NotOwnerOfToken(staked.owner);
+                revert NotOwnerOfToken("NotOwnerOfToken", staked.owner);
             }
             uint256 lastClaimed = staked.claimTimestamp;
             earned += rewardAmount * (block.timestamp - lastClaimed) / rewardInterval;
@@ -122,7 +121,7 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
             tokenId = tokenIds[i];
             Stake memory staked = vault[tokenId];
             if(staked.owner != _msgSender()) {
-                revert NotOwnerOfToken(staked.owner);
+                revert NotOwnerOfToken("NotOwnerOfToken", staked.owner);
             }
 
             delete vault[tokenId];
@@ -132,9 +131,17 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
         }
     }
 
+    function unstake(uint256[] calldata tokenIds) external {
+        _claim(_msgSender(), tokenIds, true);
+    }
+
+    function claim(uint256[] calldata tokenIds) external {
+      _claim(_msgSender(), tokenIds, false);
+    }
+
     function onERC721Received(address, address from, uint256, bytes calldata) external pure returns(bytes4) {
         if(from != address(0x0)) {
-            revert CannotSendNFTsDirectly();
+            revert CannotSendNFTsDirectly("CannotSendNFTsDirectly");
         }
         return IERC721Receiver.onERC721Received.selector;
     } 

@@ -30,8 +30,10 @@
     "lint:sol": "prettier --write \"contracts/**/*.sol\""
   },
   "dependencies": {
+    "@alch/alchemy-web3": "^1.4.7",
     "@openzeppelin/contracts": "^4.7.3",
     "abi-decoder": "^2.4.0",
+    "alchemy-sdk": "^2.6.0",
     "axios": "^1.3.4",
     "erc721a": "^4.2.3"
   },

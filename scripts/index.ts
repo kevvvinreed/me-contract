@@ -13,6 +13,9 @@ import { erc20SetAdmin } from './extension/ERC20SetAdmin';
 
 import hre, { run } from 'hardhat';
 import { ethers, utils } from 'ethers';
+import { createAlchemyWeb3 } from '@alch/alchemy-web3';
+import { Network } from 'alchemy-sdk';
+import { AbiItem } from 'web3-utils';
 
 const abiDecoder = require('abi-decoder');
 const axios = require('axios');
@@ -257,356 +260,76 @@ async function index(
     }
   }
 }
-const ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'contract ERC20K',
-        name: 'erc20',
-        type: 'address',
-      },
-      {
-        internalType: 'contract ERC721M',
-        name: 'erc721',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_rewardInterval',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_rewardAmount',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
-  },
-  {
-    inputs: [],
-    name: 'CannotSendNFTsDirectly',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-    ],
-    name: 'NotOwnerOfToken',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'TokenAlreadyStaked',
-    type: 'error',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-    ],
-    name: 'Claimed',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'value',
-        type: 'uint256',
-      },
-    ],
-    name: 'NFTStaked',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'value',
-        type: 'uint256',
-      },
-    ],
-    name: 'NFTUnstaked',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'previousOwner',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'OwnershipTransferred',
-    type: 'event',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
-      },
-    ],
-    name: 'onERC721Received',
-    outputs: [
-      {
-        internalType: 'bytes4',
-        name: '',
-        type: 'bytes4',
-      },
-    ],
-    stateMutability: 'pure',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'owner',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'renounceOwnership',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_ERC721Address',
-        type: 'address',
-      },
-    ],
-    name: 'setERC721Address',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_rewardAmount',
-        type: 'uint256',
-      },
-    ],
-    name: 'setRewardAmount',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_rewardInterval',
-        type: 'uint256',
-      },
-    ],
-    name: 'setRewardInterval',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256[]',
-        name: 'tokenIds',
-        type: 'uint256[]',
-      },
-    ],
-    name: 'stake',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'totalStaked',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'transferOwnership',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'vault',
-    outputs: [
-      {
-        internalType: 'uint24',
-        name: 'tokenId',
-        type: 'uint24',
-      },
-      {
-        internalType: 'uint48',
-        name: 'stakeTimestamp',
-        type: 'uint48',
-      },
-      {
-        internalType: 'uint48',
-        name: 'claimTimestamp',
-        type: 'uint48',
-      },
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-];
+index('3Deploy');
 
-// index('3Deploy');
-
-const URL = `https://api-goerli.etherscan.io/api?module=contract&action=getabi&address=0xFE04eeaa0aE192269109c2C4B73aA529B6e6bA26&apikey=${process.env.ETHERSCAN_KEY}`;
-const getAbi = async () => {
-  const res = await axios.get(URL);
-  return JSON.parse(res.data.result);
-};
+const stakeAddress = '0xB1736b36272B37e785810327e27FDa53f65dB403';
+// const URL = `https://api-goerli.etherscan.io/api?module=contract&action=getabi&address=${stakeAddress}&apikey=${process.env.ETHERSCAN_KEY}`;
+// const getAbi = async () => {
+//   const res = await axios.get(URL);
+//   return JSON.parse(res.data.result);
+// };
 
 const x = async () => {
   // const bytecode: any = '0x59c896be';
-  const bytecode =
-    '0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000c84f0491f5470e70000000000000000000000000000000000000000000000000153fbf585cb5b23000000000000000000000000000000000000000000000000095b04af7c968dc0';
+  // const bytecode = '0x000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000bb5c8fc8f33cc160000000000000000000000000000000000000000000000000153fbf585cb5b23000000000000000000000000000000000000000000000000095b04af7c968dc0';
 
-  const abi = await getAbi();
-  abiDecoder.addABI(abi);
+  // const abi = await getAbi();
+  // abiDecoder.addABI(abi);
+  // const decodedData = abiDecoder.decodeMethod(bytecode);
+  // console.log(`decoded data:`, decodedData);
 
-  const decodedData = abiDecoder.decodeMethod(bytecode);
-  console.log(`decoded data:`, decodedData);
-
-  // const stakeArgs = {
-  //   erc20Address: '0x4817aA6B82838B6859591Aa695679380Cc620f06',
-  //   erc721Address: '0x42DA2D8E89889804A11A308C4e60C95Ed62F95b6',
-  //   rewardInterval: 60,
-  //   rewardAmount: 1000,
+  // const settings = {
+  //   apiKey:
+  //     process.env.IS_DEV === 'true'
+  //       ? process.env.ALCHEMY_KEY_DEV
+  //       : process.env.ALCHEMY_KEY,
+  //   network:
+  //     process.env.IS_DEV === 'true' ? Network.ETH_GOERLI : Network.ETH_MAINNET,
   // };
-  // const stakeAddress = '0xFE04eeaa0aE192269109c2C4B73aA529B6e6bA26'
-  // // const stakeAddress = await stakingDeploy(stakeArgs, hre);
 
-  // try {
-  //   console.log(`\x1b[33mVerifying Staking address (${stakeAddress})\x1b[0m`);
-  //   run('verify:verify', {
-  //     address: stakeAddress,
-  //     constructorArguments: [
-  //       stakeArgs.erc20Address,
-  //       stakeArgs.erc721Address,
-  //       stakeArgs.rewardInterval,
-  //       stakeArgs.rewardAmount,
-  //     ],
-  //   });
-  // } catch (error) {
-  //   console.log(
-  //     `\x1b[31mFailed to verify staking address (${stakeAddress})\x1b[0m`,
-  //   );
-  // }
+  // const web3 = createAlchemyWeb3(
+  //   `https://${settings.network}.alchemyapi.io/v2/${settings.apiKey}`,
+  // );
+
+  // web3.eth.abi.decodeParameters([
+  //   {
+  //     data: '0x95d89b41',
+  //     to: '0xed555acc5a18e114361c5a25dd0ee8ae0f21f7ec',
+  //   },
+  //   '0x837472',
+  // ]);
+
+  // const contract = new web3.eth.Contract(
+  //   abi as AbiItem[],
+  //   process.env.ABI_ADDRESS,
+  // );
+
+  const stakeArgs = {
+    erc20Address: '0x4817aA6B82838B6859591Aa695679380Cc620f06',
+    erc721Address: '0x42DA2D8E89889804A11A308C4e60C95Ed62F95b6',
+    rewardInterval: 60,
+    rewardAmount: 1000,
+  };
+  // const stakeAddress = await stakingDeploy(stakeArgs, hre);
+
+  try {
+    console.log(`\x1b[33mVerifying Staking address (${stakeAddress})\x1b[0m`);
+    run('verify:verify', {
+      address: stakeAddress,
+      constructorArguments: [
+        stakeArgs.erc20Address,
+        stakeArgs.erc721Address,
+        stakeArgs.rewardInterval,
+        stakeArgs.rewardAmount,
+      ],
+    });
+  } catch (error) {
+    console.log(
+      `\x1b[31mFailed to verify staking address (${stakeAddress})\x1b[0m`,
+    );
+  }
 };
-x();
-// ERC20: 0x4817aA6B82838B6859591Aa695679380Cc620f06
-// ERC721: 0x42DA2D8E89889804A11A308C4e60C95Ed62F95b6
-// StakingContract: 0x56A0206bE63647aE7C354567C60b22d4A7c7911E
+// x();
+// ERC20: 0x4d71532934c2328E4A3d6fc87219a6b7B4d068AE
+// ERC721: 0xdDDa0C3532566B15511A046EeB2a4167355Ce938
+// StakingContract: 0x267F6C7F0a15390aD4684f9a9Cf14B997A7B5DdA
