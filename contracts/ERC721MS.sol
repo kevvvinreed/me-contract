@@ -1,23 +1,19 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
- 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+// SPDX-License-Identifier: MIT 
+
+pragma solidity ^0.8.4;
+
+import './ERC721M.sol';
+import './ERC20/ERC20K.sol';
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "../ERC721M.sol";
-import "./ERC20K.sol";
 
-contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {  
-
-    address ERC721Address;
-    
-    uint256 rewardInterval;
-    uint256 rewardAmount;
-    ERC20K token;
-    ERC721M nft;
-    
+contract ERC721MS is ERC721M { 
+    using ECDSA for bytes32;
+   
+    uint256 _rewardInterval;
+    uint256 _rewardAmount;
     uint256 public totalStaked;
+    ERC20K _token;
      
     struct Stake {
         uint24 tokenId;
@@ -27,41 +23,48 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
     }
 
     mapping(uint256 => Stake) public vault;
-  
+
     event NFTStaked(address owner, uint256 tokenId, uint256 value);
     event NFTUnstaked(address owner, uint256 tokenId, uint256 value);
     event Claimed(address owner, uint256 amount);
-
-
+ 
     error NotOwnerOfToken(string message, address owner);
     error TokenAlreadyStaked(string message);
-    error CannotSendNFTsDirectly(string message);
+    error CannotTransferWhileStaked(string message, uint256 tokenId);
 
-    constructor(ERC20K erc20, ERC721M erc721, uint256 _rewardInterval, uint256 _rewardAmount) { 
-        token = erc20;
-        nft = erc721;
-        rewardInterval = _rewardInterval;
-        rewardAmount = _rewardAmount;
+    constructor(
+        string memory collectionName,
+        string memory collectionSymbol,
+        string memory tokenURISuffix,
+        uint256 maxMintableSupply,
+        uint256 globalWalletLimit,
+        address cosigner,
+        uint64 timestampExpirySeconds,
+        ERC20K token,
+        uint256 rewardInterval, 
+        uint256 rewardAmount
+    ) ERC721M(collectionName, collectionSymbol, tokenURISuffix, maxMintableSupply, globalWalletLimit, cosigner, timestampExpirySeconds) {
+        _token = token;
+        _rewardInterval = rewardInterval;
+        _rewardAmount = rewardAmount;
     }
+
     
-    function setRewardInterval(uint256 _rewardInterval) external onlyOwner {
-        rewardInterval = _rewardInterval;
+    function setRewardInterval(uint256 rewardInterval) external onlyOwner {
+        _rewardInterval = rewardInterval;
     }
 
-    function setRewardAmount(uint256 _rewardAmount) external onlyOwner {
-        rewardAmount = _rewardAmount;
+    function setRewardAmount(uint256 rewardAmount) external onlyOwner {
+        _rewardAmount = rewardAmount;
     }
 
-    function setERC721Address(address _ERC721Address) external onlyOwner {
-        ERC721Address = _ERC721Address;
-    } 
-
+    
     function stake(uint256[] calldata tokenIds) external {
         uint256 tokenId;
         totalStaked += tokenIds.length;
         for(uint i = 0; i < tokenIds.length; i++) {
             tokenId = tokenIds[i];
-            address owner = nft.ownerOf(tokenId);
+            address owner = ownerOf(tokenId);
             
             if(owner != _msgSender()) { 
                 revert NotOwnerOfToken("NotOwnerOfToken", owner);
@@ -70,7 +73,7 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
                 revert TokenAlreadyStaked("TokenAlreadyStaked");
             } 
             // token transfers from ERC721 contract must be approved or else this will throw an error
-            nft.transferFrom(_msgSender(), address(this), tokenId);
+            // nft.transferFrom(_msgSender(), address(this), tokenId); 
             emit NFTStaked(_msgSender(), tokenId, block.timestamp);
 
             vault[tokenId] = Stake({
@@ -93,7 +96,7 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
                 revert NotOwnerOfToken("NotOwnerOfToken", staked.owner);
             }
             uint256 lastClaimed = staked.claimTimestamp;
-            earned += rewardAmount * (block.timestamp - lastClaimed) / rewardInterval;
+            earned += _rewardAmount * (block.timestamp - lastClaimed) / _rewardInterval;
             // Update the claimTimestamp
             vault[tokenId] = Stake({
                 owner: staked.owner,
@@ -104,7 +107,7 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
         }
 
         if (earned > 0) {
-            token.airdrop(user, earned);
+            _token.airdrop(user, earned);
         }
 
         if(_unstake) {
@@ -128,7 +131,7 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
             delete vault[tokenId];
             emit NFTUnstaked(user, tokenId, block.timestamp);
 
-            nft.transferFrom(address(this), user, tokenId);
+            // nft.transferFrom(address(this), user, tokenId);
         }
     }
 
@@ -140,10 +143,13 @@ contract StakingERC721ForERC20 is Ownable, ReentrancyGuard {
       _claim(_msgSender(), tokenIds, false);
     }
 
-    function onERC721Received(address, address from, uint256, bytes calldata) external pure returns(bytes4) {
-        if(from != address(0x0)) {
-            revert CannotSendNFTsDirectly("CannotSendNFTsDirectly");
+    // Lock staked tokens
+    function _beforeTokenTransfers(address from, address to, uint256 startTokenId, uint256 quantity) internal override {
+        for(uint i = startTokenId; i < startTokenId + quantity; i++) { 
+            if(vault[i].owner != address(0x0)) {
+                revert CannotTransferWhileStaked("CannotTransferWhileStaked", i);
+            } 
         }
-        return IERC721Receiver.onERC721Received.selector;
-    } 
+        super._beforeTokenTransfers(from, to, startTokenId, quantity);
+    }
 }

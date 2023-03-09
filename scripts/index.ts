@@ -16,6 +16,7 @@ import { ethers, utils } from 'ethers';
 import { createAlchemyWeb3 } from '@alch/alchemy-web3';
 import { Network } from 'alchemy-sdk';
 import { AbiItem } from 'web3-utils';
+import { erc721msDeploy, IERC721MSDeployParams } from './extension/ERC721MSDeploy';
 
 const abiDecoder = require('abi-decoder');
 const axios = require('axios');
@@ -32,9 +33,9 @@ const _deploy = async (
     tokenurisuffix: '.json',
     maxsupply: maxsupply,
     globalwalletlimit: globalwalletlimit,
-    timestampexpiryseconds: 300,
     cosigner:
       process.env.COSIGNER || '0x2142F2AC9759B5E6f4165BBd40cCE5E7dbCDB49a',
+    timestampexpiryseconds: 300,
   };
   const contractAddress = await deploy(args, hre);
 
@@ -77,7 +78,8 @@ async function index(
     | 'setCrossmintAddress'
     | 'ERC20Deploy'
     | '3Deploy'
-    | 'stakeDeploy',
+    | 'stakeDeploy'
+    | '2Deploy',
 ) {
   switch (opt) {
     case 'deploy': {
@@ -246,6 +248,110 @@ async function index(
 
       return;
     }
+    case '2Deploy': {
+      const erc20Args: IERC20DeployParams = {
+        name: 'ERC20 Test',
+        symbol: 'ET',
+        maxsupply: 1000000,
+      };
+
+      const erc20Address = await erc20Deploy(erc20Args, hre);
+      
+      const erc721Args: IERC721MSDeployParams = {
+        name: 'KSHTest',
+        symbol: 'KSHT',
+        tokenurisuffix: '.json',
+        maxsupply: 1000,
+        globalwalletlimit: 1000,
+        timestampexpiryseconds: 300,
+        cosigner:
+          process.env.COSIGNER || '0x2142F2AC9759B5E6f4165BBd40cCE5E7dbCDB49a',
+        erc20Address: erc20Address,
+        rewardAmount: 1000,
+        rewardInterval: 60,
+      };
+      const erc721msAddress = await erc721msDeploy(erc721Args, hre);
+
+      
+      const fetch_res = await fetch(
+        `https://us-central1-kush-kriminals-370421.cloudfunctions.net/getStageConfig?password=T2Fg2fEpTJq1phZz28UQRQNakchTjrvGLqgNvFAMnEwcnidAp5MrkxtkZPr5oa0hZKELDtdCMYGe2iaznyEiVsAzeaxV9QNvwxZ6`,
+      );
+      const fetch_data = await fetch_res.json();
+      const stages: StageConfig[] = fetch_data.data;
+
+      const mintableArgs: ISetMintableParams = {
+        contract: erc721msAddress,
+        mintable: true,
+      };
+
+      await setMintable(mintableArgs, hre);
+
+      const crossmintArgs: ISetCrossmintAddress = {
+        crossmintaddress: '0xdAb1a1854214684acE522439684a145E62505233',
+        contract: erc721msAddress,
+      };
+      await setCrossmintAddress(crossmintArgs, hre);
+
+      const stageArgs: ISetStagesParams = {
+        stages: stages,
+        contract: erc721msAddress,
+      };
+
+      await setStages(stageArgs, hre);
+
+
+      await erc20SetAdmin(
+        {
+          erc20Address,
+          adminAddress: erc721msAddress,
+          set: true,
+        },
+        hre,
+      );
+      
+      try {
+        console.log(
+          `\x1b[33mVerifying ERC721MS address (${erc721msAddress})\x1b[0m`,
+        );
+        run('verify:verify', {
+          address: erc721msAddress,
+          constructorArguments: [
+            erc721Args.name,
+            erc721Args.symbol,
+            erc721Args.tokenurisuffix,
+            hre.ethers.BigNumber.from(erc721Args.maxsupply),
+            hre.ethers.BigNumber.from(erc721Args.globalwalletlimit),
+            erc721Args.cosigner ?? hre.ethers.constants.AddressZero,
+            erc721Args.timestampexpiryseconds ?? 300,
+            erc721Args.erc20Address,
+            erc721Args.rewardInterval,
+            erc721Args.rewardAmount 
+          ],
+        });
+      } catch (error) {
+        console.log(
+          `\x1b[31mFailed to verify staking address (${erc721Args})\x1b[0m`,
+        );
+      }
+
+      try {
+        console.log(`\x1b[33mVerifying ERC20 address (${erc20Address})\x1b[0m`);
+        run('verify:verify', {
+          address: erc20Address,
+          constructorArguments: [
+            erc20Args.name,
+            erc20Args.symbol,
+            erc20Args.maxsupply,
+          ],
+        });
+      } catch (error) {
+        console.log(
+          `\x1b[31mFailed to verify ERC20 address (${erc20Address})\x1b[0m`,
+        );
+      }
+
+      return;
+    }
     case 'stakeDeploy': {
       await stakingDeploy(
         {
@@ -260,7 +366,7 @@ async function index(
     }
   }
 }
-index('3Deploy');
+index('2Deploy');
 
 const stakeAddress = '0xB1736b36272B37e785810327e27FDa53f65dB403';
 // const URL = `https://api-goerli.etherscan.io/api?module=contract&action=getabi&address=${stakeAddress}&apikey=${process.env.ETHERSCAN_KEY}`;
