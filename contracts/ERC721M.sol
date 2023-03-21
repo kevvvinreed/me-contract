@@ -464,7 +464,7 @@ contract ERC721M is IERC721M, ERC721AQueryable, Ownable, ReentrancyGuard {
 
         _stageMintedCountsPerWallet[activeStage][to] += qty;
         _stageMintedCounts[activeStage] += qty;
-        _safeMint(to, qty);
+        _safeMint(to, qty); 
     }
 
     /**

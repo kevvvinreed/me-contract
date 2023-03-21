@@ -16,7 +16,10 @@ import { ethers, utils } from 'ethers';
 import { createAlchemyWeb3 } from '@alch/alchemy-web3';
 import { Network } from 'alchemy-sdk';
 import { AbiItem } from 'web3-utils';
-import { erc721msDeploy, IERC721MSDeployParams } from './extension/ERC721MSDeploy';
+import {
+  erc721msDeploy,
+  IERC721MSDeployParams,
+} from './extension/ERC721MSDeploy';
 
 const abiDecoder = require('abi-decoder');
 const axios = require('axios');
@@ -256,7 +259,7 @@ async function index(
       };
 
       const erc20Address = await erc20Deploy(erc20Args, hre);
-      
+
       const erc721Args: IERC721MSDeployParams = {
         name: 'KSHTest',
         symbol: 'KSHT',
@@ -272,7 +275,6 @@ async function index(
       };
       const erc721msAddress = await erc721msDeploy(erc721Args, hre);
 
-      
       const fetch_res = await fetch(
         `https://us-central1-kush-kriminals-370421.cloudfunctions.net/getStageConfig?password=T2Fg2fEpTJq1phZz28UQRQNakchTjrvGLqgNvFAMnEwcnidAp5MrkxtkZPr5oa0hZKELDtdCMYGe2iaznyEiVsAzeaxV9QNvwxZ6`,
       );
@@ -299,7 +301,6 @@ async function index(
 
       await setStages(stageArgs, hre);
 
-
       await erc20SetAdmin(
         {
           erc20Address,
@@ -308,7 +309,7 @@ async function index(
         },
         hre,
       );
-      
+
       try {
         console.log(
           `\x1b[33mVerifying ERC721MS address (${erc721msAddress})\x1b[0m`,
@@ -325,7 +326,7 @@ async function index(
             erc721Args.timestampexpiryseconds ?? 300,
             erc721Args.erc20Address,
             erc721Args.rewardInterval,
-            erc721Args.rewardAmount 
+            erc721Args.rewardAmount,
           ],
         });
       } catch (error) {
@@ -366,7 +367,8 @@ async function index(
     }
   }
 }
-index('2Deploy');
+// index('2Deploy');
+index('setStages');
 
 const stakeAddress = '0xB1736b36272B37e785810327e27FDa53f65dB403';
 // const URL = `https://api-goerli.etherscan.io/api?module=contract&action=getabi&address=${stakeAddress}&apikey=${process.env.ETHERSCAN_KEY}`;

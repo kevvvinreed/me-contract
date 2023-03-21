@@ -35,7 +35,7 @@ contract ERC20K is ERC20, ERC20Burnable, Ownable, ReentrancyGuard {
         _isAdmin[_operator] = _approved;
     }
 
-    function isAdmin(address _operator) internal view returns(bool) {
+    function isAdmin(address _operator) public view returns(bool) {
         return _isAdmin[_operator];
     }  
 
