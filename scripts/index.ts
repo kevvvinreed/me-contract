@@ -25,6 +25,7 @@ const abiDecoder = require('abi-decoder');
 const axios = require('axios');
 
 const _deploy = async (
+  isProxy: boolean = true,
   contractName: string = 'KSHTest',
   symbol: string = 'KSHT',
   maxsupply: number = 1000,
@@ -39,6 +40,7 @@ const _deploy = async (
     cosigner:
       process.env.COSIGNER || '0x2142F2AC9759B5E6f4165BBd40cCE5E7dbCDB49a',
     timestampexpiryseconds: 300,
+    isProxy: isProxy,
   };
   const contractAddress = await deploy(args, hre);
 
@@ -68,6 +70,26 @@ const _deploy = async (
 
   await setStages(stageArgs, hre);
 
+  try {
+    console.log(`\x1b[33mVerifying ERC20 address (${contractAddress})\x1b[0m`);
+    run('verify:verify', {
+      address: contractAddress,
+      constructorArguments: [
+        args.name,
+        args.symbol,
+        args.tokenurisuffix,
+        hre.ethers.BigNumber.from(args.maxsupply),
+        hre.ethers.BigNumber.from(args.globalwalletlimit),
+        args.cosigner ?? hre.ethers.constants.AddressZero,
+        args.timestampexpiryseconds ?? 300,
+      ],
+    });
+  } catch (error) {
+    console.log(
+      `\x1b[31mFailed to verify ERC20 address (${contractAddress})\x1b[0m`,
+    );
+  }
+
   return contractAddress;
 };
 
@@ -87,6 +109,7 @@ async function index(
   switch (opt) {
     case 'deploy': {
       const contractAddress = await _deploy();
+       
       return;
     }
     case 'setStages': {
@@ -366,9 +389,8 @@ async function index(
       return;
     }
   }
-}
-// index('2Deploy');
-index('setStages');
+} 
+index('deploy');
 
 const stakeAddress = '0xB1736b36272B37e785810327e27FDa53f65dB403';
 // const URL = `https://api-goerli.etherscan.io/api?module=contract&action=getabi&address=${stakeAddress}&apikey=${process.env.ETHERSCAN_KEY}`;

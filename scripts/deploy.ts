@@ -16,6 +16,7 @@ export interface IDeployParams {
   timestampexpiryseconds: number;
   increasesupply?: boolean;
   useoperatorfilterer?: boolean;
+  isProxy?: boolean;
 }
 
 export const deploy = async (
@@ -61,7 +62,13 @@ export const deploy = async (
     ),
   );
 
-  const erc721M = await ERC721M.deploy(...params);
+  let erc721M;
+  if (args.isProxy) { 
+    erc721M = await hre.upgrades.deployProxy(ERC721M, [...params as any], { initializer: 'constructor'});
+  }
+  else { 
+    erc721M = await ERC721M.deploy(...params);
+  }
 
   await erc721M.deployed();
 
