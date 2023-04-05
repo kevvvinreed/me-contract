@@ -8,4 +8,5 @@ export const ContractDetails = {
   ERC721MOperatorFilterer: { name: 'ERC721MOperatorFilterer' }, // ERC721M with operator filterer
   ERC20K: { name: 'ERC20K' },
   StakingContract: { name: 'StakingERC721ForERC20' },
+  ProxyContract: { name: 'Proxy' }
 } as const;
