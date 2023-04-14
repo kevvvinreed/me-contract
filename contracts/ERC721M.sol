@@ -3,14 +3,14 @@
 pragma solidity ^0.8.4;
 
 // import "@openzeppelin/contracts/access/Ownable.sol";
+// import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
-import "erc721a/contracts/extensions/ERC721AQueryable.sol";
+import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol"; 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
-import 'erc721a-upgradeable/contracts/ERC721AUpgradeable.sol';
+import "erc721a-upgradeable/contracts/extensions/ERC721AQueryableUpgradeable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IERC721M.sol";
 
 /**
@@ -23,7 +23,8 @@ import "./IERC721M.sol";
  *  - crossmint support
  *  - anti-botting
  */
-contract ERC721M is IERC721M, ERC721AQueryable, OwnableUpgradeable, ReentrancyGuard, Initializable, ERC721AUpgradeable {
+
+contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, Ownable, ReentrancyGuard, Initializable {
     using ECDSA for bytes32;
 
     // Whether this contract is mintable.
@@ -63,25 +64,25 @@ contract ERC721M is IERC721M, ERC721AQueryable, OwnableUpgradeable, ReentrancyGu
     // Minted count per stage.
     mapping(uint256 => uint256) private _stageMintedCounts;
 
-    constructor(
-        string memory collectionName,
-        string memory collectionSymbol,
-        string memory tokenURISuffix,
-        uint256 maxMintableSupply,
-        uint256 globalWalletLimit,
-        address cosigner,
-        uint64 timestampExpirySeconds
-    ) ERC721A(collectionName, collectionSymbol) {
-        if (globalWalletLimit > maxMintableSupply)
-            revert GlobalWalletLimitOverflow();
+    // constructor(
+    //     string memory collectionName,
+    //     string memory collectionSymbol,
+    //     string memory tokenURISuffix,
+    //     uint256 maxMintableSupply,
+    //     uint256 globalWalletLimit,
+    //     address cosigner,
+    //     uint64 timestampExpirySeconds
+    // ) ERC721A(collectionName, collectionSymbol) {
+    //     if (globalWalletLimit > maxMintableSupply)
+    //         revert GlobalWalletLimitOverflow();
 
-        _mintable = false;
-        _maxMintableSupply = maxMintableSupply;
-        _globalWalletLimit = globalWalletLimit;
-        _tokenURISuffix = tokenURISuffix;
-        _cosigner = cosigner; // ethers.constants.AddressZero for no cosigning
-        _timestampExpirySeconds = timestampExpirySeconds;
-    }
+    //     _mintable = false;
+    //     _maxMintableSupply = maxMintableSupply;
+    //     _globalWalletLimit = globalWalletLimit;
+    //     _tokenURISuffix = tokenURISuffix;
+    //     _cosigner = cosigner; // ethers.constants.AddressZero for no cosigning
+    //     _timestampExpirySeconds = timestampExpirySeconds;
+    // }
 
     function initialize(
         string memory collectionName,

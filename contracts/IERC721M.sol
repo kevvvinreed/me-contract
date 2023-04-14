@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "erc721a/contracts/extensions/IERC721AQueryable.sol";
+import "erc721a-upgradeable/contracts/extensions/IERC721AQueryableUpgradeable.sol";
 
-interface IERC721M is IERC721AQueryable {
+interface IERC721M is IERC721AQueryableUpgradeable {
     error CannotIncreaseMaxMintableSupply();
     error CannotUpdatePermanentBaseURI();
     error CosignerNotSet();
