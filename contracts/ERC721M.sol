@@ -1,16 +1,16 @@
 //SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.4;
-
-// import "@openzeppelin/contracts/access/Ownable.sol";
-// import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+ 
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol"; 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "erc721a-upgradeable/contracts/extensions/ERC721AQueryableUpgradeable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "erc721a-upgradeable/contracts/extensions/ERC721AQueryableUpgradeable.sol"; 
+
+// import "@openzeppelin/contracts/proxy/utils/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+// import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol"; 
 import "./IERC721M.sol";
 
 /**
@@ -24,7 +24,7 @@ import "./IERC721M.sol";
  *  - anti-botting
  */
 
-contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, Ownable, ReentrancyGuard, Initializable {
+contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     using ECDSA for bytes32;
 
     // Whether this contract is mintable.
@@ -95,6 +95,8 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, Ownable, ReentrancyGu
     ) public initializer {
 
         __ERC721A_init(collectionName, collectionSymbol);
+        __ReentrancyGuard_init();
+        __Ownable_init();
 
         if (globalWalletLimit > maxMintableSupply) {
             revert GlobalWalletLimitOverflow(); 
@@ -561,7 +563,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, Ownable, ReentrancyGu
     function tokenURI(uint256 tokenId)
         public
         view
-        override(ERC721A, IERC721A)
+        override(ERC721AUpgradeable, IERC721AUpgradeable)
         returns (string memory)
     {
         if (!_exists(tokenId)) revert URIQueryForNonexistentToken();

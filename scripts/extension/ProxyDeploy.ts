@@ -20,7 +20,8 @@ export const proxyDeploy = async (
     `Going to deploy ${contractName} with params`,
     JSON.stringify(args, null, 2),
   );
-  const ProxyContract = await hre.ethers.getContractFactory(contractName);
+  // const ProxyContract = await hre.ethers.getContractFactory(contractName); 
+  const ERC721MContract = await hre.ethers.getContractFactory(ContractDetails.ERC721M.name);
 
   const params = [
     args.logicAddress,
@@ -40,10 +41,12 @@ export const proxyDeploy = async (
     ),
   );
 
-  const proxyContract = await ProxyContract.deploy(...params);
+  // const proxyContract = await ProxyContract.deploy(...params);
+  const contract = await hre.upgrades.deployProxy(ERC721MContract, params);
+  await contract.deployed();
 
-  proxyContract
-  console.log(`${contractName} deployed to:`, proxyContract.address);
+  // proxyContract
+  console.log(`${contractName} deployed to:`, contract.address);
 
-  return proxyContract.address;
+  return contract.address;
 };
