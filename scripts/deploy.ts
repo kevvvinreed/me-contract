@@ -61,10 +61,12 @@ export const deploy = async (
       }),
     ),
   );
-
+ 
   let erc721M;
   if (args.isProxy) { 
-    erc721M = await hre.upgrades.deployProxy(ERC721M, [...params as any], { initializer: 'constructor'});
+    erc721M = await hre.upgrades.deployProxy(ERC721M, [...params], { initializer: 'initialize', kind: 'transparent' });
+    // const initTx = await erc721M.initialize();
+    console.log(`erc721M`, erc721M);
   }
   else { 
     erc721M = await ERC721M.deploy(...params);

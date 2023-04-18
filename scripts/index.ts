@@ -111,7 +111,7 @@ async function index(
   switch (opt) {
     case 'deploy': {
       const contractAddress = await _deploy();
-       
+
       return;
     }
     case 'setStages': {
@@ -391,10 +391,22 @@ async function index(
       return;
     }
     case 'proxyDeploy': {
-      await proxyDeploy({logicAddress: process.env.CONTRACT_ADDRESS || "", adminAddress: process.env.DEPLOYER_ADDRESS || "", data: ""}, hre)
+      const erc721Args: IDeployParams = {
+        name: 'KSHTest',
+        symbol: 'KSHT',
+        tokenurisuffix: '.json',
+        maxsupply: 1000,
+        globalwalletlimit: 1000,
+        timestampexpiryseconds: 300,
+        cosigner:
+          process.env.COSIGNER || '0x2142F2AC9759B5E6f4165BBd40cCE5E7dbCDB49a',
+        isProxy: true,
+      };
+
+      await deploy(erc721Args, hre);
+      // await proxyDeploy({logicAddress: process.env.CONTRACT_ADDRESS || "", adminAddress: process.env.DEPLOYER_ADDRESS || "", data: ""}, hre)
     }
   }
-} 
+}
 
 index('proxyDeploy');
- 

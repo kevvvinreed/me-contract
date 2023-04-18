@@ -92,8 +92,8 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         uint256 globalWalletLimit,
         address cosigner,
         uint64 timestampExpirySeconds
-    ) public initializer {
-
+    ) initializerERC721A initializer public {
+ 
         __ERC721A_init(collectionName, collectionSymbol);
         __ReentrancyGuard_init();
         __Ownable_init();
