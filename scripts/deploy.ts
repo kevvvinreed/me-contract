@@ -63,10 +63,12 @@ export const deploy = async (
   );
  
   let erc721M;
+  let implementationAddress = undefined;
   if (args.isProxy) { 
-    erc721M = await hre.upgrades.deployProxy(ERC721M, [...params], { initializer: 'initialize', kind: 'transparent' });
-    // const initTx = await erc721M.initialize();
-    console.log(`erc721M`, erc721M);
+    erc721M = await hre.upgrades.deployProxy(ERC721M, [...params], { initializer: 'initialize', kind: 'transparent' }); 
+    implementationAddress = (erc721M.deployTransaction as any).creates; 
+    console.log(`erc721M`,erc721M)
+    console.log(`implementationAddress:${implementationAddress}`)
   }
   else { 
     erc721M = await ERC721M.deploy(...params);
@@ -76,5 +78,5 @@ export const deploy = async (
 
   console.log(`${contractName} deployed to:`, erc721M.address);
   
-  return erc721M.address;
+  return implementationAddress ? implementationAddress : erc721M.address;
 };

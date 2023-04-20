@@ -403,8 +403,31 @@ async function index(
         isProxy: true,
       };
 
-      await deploy(erc721Args, hre);
-      // await proxyDeploy({logicAddress: process.env.CONTRACT_ADDRESS || "", adminAddress: process.env.DEPLOYER_ADDRESS || "", data: ""}, hre)
+      // const erc721Address = await deploy(erc721Args, hre);
+      const erc721Address = '0xD2A8bF84E31f61D93044D815B0156dD3f448536E';
+      console.log(`Implementation contract address: ${erc721Address}`);
+      try {
+        console.log(
+          `\x1b[33mVerifying implementation contract (${erc721Address})\x1b[0m`,
+        );
+        run('verify:verify', {
+          address: erc721Address, 
+          name: 'ERC721M',
+          constructorArguments: [
+            erc721Args.name,
+            erc721Args.symbol,
+            erc721Args.tokenurisuffix,
+            hre.ethers.BigNumber.from(erc721Args.maxsupply),
+            hre.ethers.BigNumber.from(erc721Args.globalwalletlimit),
+            erc721Args.cosigner ?? hre.ethers.constants.AddressZero,
+            erc721Args.timestampexpiryseconds ?? 300,
+          ],
+        });
+      } catch (error) {
+        console.log(
+          `\x1b[31mFailed to verify implementation contract (${erc721Args})\x1b[0m`,
+        );
+      }
     }
   }
 }
