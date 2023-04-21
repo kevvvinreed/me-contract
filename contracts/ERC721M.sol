@@ -346,7 +346,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         if (index >= _mintStages.length) {
             revert("InvalidStage");
         }
-        uint32 walletMinted = _stageMintedCountsPerWallet[index][msg.sender];
+        uint32 walletMinted = _stageMintedCountsPerWallet[index][_msgSender()];
         uint256 stageMinted = _stageMintedCounts[index];
         return (_mintStages[index], walletMinted, stageMinted);
     }
@@ -409,7 +409,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         uint64 timestamp,
         bytes calldata signature
     ) external payable nonReentrant {
-        _mintInternal(qty, msg.sender, proof, timestamp, signature);
+        _mintInternal(qty, _msgSender(), proof, timestamp, signature);
     }
 
     /**
@@ -431,7 +431,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         if (_crossmintAddress == address(0)) revert CrossmintAddressNotSet();
 
         // Check the caller is Crossmint
-        if (msg.sender != _crossmintAddress) revert CrossmintOnly();
+        if (_msgSender() != _crossmintAddress) revert CrossmintOnly();
 
         _mintInternal(qty, to, proof, timestamp, signature);
     }
@@ -516,7 +516,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
      */
     function withdraw() external onlyOwner {
         uint256 value = address(this).balance;
-        (bool success, ) = msg.sender.call{value: value}("");
+        (bool success, ) = _msgSender().call{value: value}("");
         if (!success) revert WithdrawFailed();
         emit Withdraw(value);
     }

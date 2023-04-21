@@ -20,7 +20,6 @@ import {
   erc721msDeploy,
   IERC721MSDeployParams,
 } from './extension/ERC721MSDeploy';
-import { proxyDeploy } from './extension/ProxyDeploy';
 
 const abiDecoder = require('abi-decoder');
 const axios = require('axios');
@@ -106,7 +105,8 @@ async function index(
     | '3Deploy'
     | 'stakeDeploy'
     | '2Deploy'
-    | 'proxyDeploy',
+    | 'proxyDeploy'
+    | 'initImplementation',
 ) {
   switch (opt) {
     case 'deploy': {
@@ -410,18 +410,9 @@ async function index(
         console.log(
           `\x1b[33mVerifying implementation contract (${erc721Address})\x1b[0m`,
         );
-        run('verify:verify', {
-          address: erc721Address, 
+        hre.run('verify:verify', {
+          address: erc721Address,
           name: 'ERC721M',
-          constructorArguments: [
-            erc721Args.name,
-            erc721Args.symbol,
-            erc721Args.tokenurisuffix,
-            hre.ethers.BigNumber.from(erc721Args.maxsupply),
-            hre.ethers.BigNumber.from(erc721Args.globalwalletlimit),
-            erc721Args.cosigner ?? hre.ethers.constants.AddressZero,
-            erc721Args.timestampexpiryseconds ?? 300,
-          ],
         });
       } catch (error) {
         console.log(
@@ -429,7 +420,48 @@ async function index(
         );
       }
     }
+    case 'initImplementation': {
+      const args: IDeployParams = {
+        name: 'KSHTest',
+        symbol: 'KSHT',
+        tokenurisuffix: '.json',
+        maxsupply: 1000,
+        globalwalletlimit: 1000,
+        cosigner:
+          process.env.COSIGNER || '0x2142F2AC9759B5E6f4165BBd40cCE5E7dbCDB49a',
+        timestampexpiryseconds: 300,
+        isProxy: true,
+      };
+      // const contractAddress = await deploy(args, hre);
+      const contractAddress = process.env.CONTRACT_ADDRESS || "";
+
+      const fetch_res = await fetch(
+        `https://us-central1-kush-kriminals-370421.cloudfunctions.net/getStageConfig?password=${process.env.STAGE_PASSWORD}`,
+      );
+      const fetch_data = await fetch_res.json();
+      const stages: StageConfig[] = fetch_data.data;
+
+      const mintableArgs: ISetMintableParams = {
+        contract: contractAddress,
+        mintable: true,
+      };
+
+      await setMintable(mintableArgs, hre);
+
+      const crossmintArgs: ISetCrossmintAddress = {
+        crossmintaddress: '0xdAb1a1854214684acE522439684a145E62505233',
+        contract: contractAddress,
+      };
+      await setCrossmintAddress(crossmintArgs, hre);
+
+      const stageArgs: ISetStagesParams = {
+        stages: stages,
+        contract: contractAddress,
+      };
+
+      await setStages(stageArgs, hre);
+    }
   }
 }
-
-index('proxyDeploy');
+index('initImplementation');
+// index('proxyDeploy');
