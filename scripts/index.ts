@@ -20,6 +20,7 @@ import {
   erc721msDeploy,
   IERC721MSDeployParams,
 } from './extension/ERC721MSDeploy';
+import { ContractDetails } from './common/constants';
 
 const abiDecoder = require('abi-decoder');
 const axios = require('axios');
@@ -106,7 +107,8 @@ async function index(
     | 'stakeDeploy'
     | '2Deploy'
     | 'proxyDeploy'
-    | 'initImplementation',
+    | 'initImplementation'
+    | 'upgradeImplementation',
 ) {
   switch (opt) {
     case 'deploy': {
@@ -404,7 +406,7 @@ async function index(
       };
 
       // const erc721Address = await deploy(erc721Args, hre);
-      const erc721Address = '0xD2A8bF84E31f61D93044D815B0156dD3f448536E';
+      const erc721Address = '0x99D330745Ce4384aC0b73dC97a532fD61cc4c7a6';
       console.log(`Implementation contract address: ${erc721Address}`);
       try {
         console.log(
@@ -432,8 +434,8 @@ async function index(
         timestampexpiryseconds: 300,
         isProxy: true,
       };
-      // const contractAddress = await deploy(args, hre);
-      const contractAddress = process.env.CONTRACT_ADDRESS || "";
+
+      const contractAddress = process.env.CONTRACT_ADDRESS || '';
 
       const fetch_res = await fetch(
         `https://us-central1-kush-kriminals-370421.cloudfunctions.net/getStageConfig?password=${process.env.STAGE_PASSWORD}`,
@@ -461,7 +463,16 @@ async function index(
 
       await setStages(stageArgs, hre);
     }
+    case 'upgradeImplementation': {
+      const ERC721M = await hre.ethers.getContractFactory(
+        ContractDetails.ERC721M.name,
+      );
+      await hre.upgrades.upgradeProxy(
+        '0x529dF17Bd9264B2379643684E8663175FF534616',
+        ERC721M,
+        { kind: 'transparent' },
+      );
+    }
   }
 }
-index('initImplementation');
-// index('proxyDeploy');
+index('proxyDeploy');
