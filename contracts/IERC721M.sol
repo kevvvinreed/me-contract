@@ -45,6 +45,7 @@ interface IERC721M is IERC721AQueryableUpgradeable {
         uint64 endTimeUnixSeconds
     );
 
+    // event Test(address addr);
     event SetCosigner(address cosigner);
     event SetCrossmintAddress(address crossmintAddress);
     event SetMintable(bool mintable);

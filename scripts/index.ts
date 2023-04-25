@@ -406,7 +406,7 @@ async function index(
       };
 
       // const erc721Address = await deploy(erc721Args, hre);
-      const erc721Address = '0x99D330745Ce4384aC0b73dC97a532fD61cc4c7a6';
+      const erc721Address = '0x121Bd433a482E79b74a0A7BB6b27DAB08E947dA1';
       console.log(`Implementation contract address: ${erc721Address}`);
       try {
         console.log(
@@ -421,6 +421,7 @@ async function index(
           `\x1b[31mFailed to verify implementation contract (${erc721Args})\x1b[0m`,
         );
       }
+      return;
     }
     case 'initImplementation': {
       const args: IDeployParams = {
@@ -462,6 +463,7 @@ async function index(
       };
 
       await setStages(stageArgs, hre);
+      return;
     }
     case 'upgradeImplementation': {
       const ERC721M = await hre.ethers.getContractFactory(
@@ -472,6 +474,7 @@ async function index(
         ERC721M,
         { kind: 'transparent' },
       );
+      return;
     }
   }
 }

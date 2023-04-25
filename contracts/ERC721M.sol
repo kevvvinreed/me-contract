@@ -412,6 +412,10 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         _mintInternal(qty, _msgSender(), proof, timestamp, signature);
     }
 
+    // function test() external payable nonReentrant {
+    //     emit Test(_msgSender());
+    // }
+
     /**
      * @dev Mints token(s) through crossmint. This function is supposed to be called by crossmint.
      *
