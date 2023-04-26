@@ -8,7 +8,7 @@ import 'hardhat-gas-reporter';
 import 'hardhat-watcher';
 import { HardhatUserConfig, task, types } from 'hardhat/config';
 import 'solidity-coverage';
-import "@openzeppelin/hardhat-upgrades";
+import '@openzeppelin/hardhat-upgrades';
 
 import { deploy } from './scripts/deploy';
 import { deployBA } from './scripts/deployBA';
@@ -49,7 +49,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  defaultNetwork: 'goerli',
+  defaultNetwork: 'sepolia',
   paths: {
     artifacts: './artifacts',
     cache: './cache',
@@ -64,6 +64,11 @@ const config: HardhatUserConfig = {
     },
     goerli: {
       url: process.env.GOERLI_URL || '',
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    sepolia: {
+      url: process.env.SEPOLIA_URL || '',
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },

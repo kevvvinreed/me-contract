@@ -1,0 +1,572 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xDbB525d985115F0a52C16d828bA2A86c96f115CF",
+    "txHash": "0x43803821e0633492206cf4d0968db76baaca2b99746d6f203c5bbb0631de8bd7"
+  },
+  "proxies": [
+    {
+      "address": "0xeFE7756209ca6329006B305515562a0b15e89371",
+      "txHash": "0x38980ffcc5b7924a57b6f066596a13eae69bfe3b92cd2e11b81bcc34a3f7bbd8",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "ac6ea36901bfee1429162ad5e2c1a93866eb7d744fd32abf0506dd3f8a0f9f6e": {
+      "address": "0xD79051b486ceF5bFE9a99619578A3eC932065668",
+      "txHash": "0x4e51ac1204d85ec7f9fd0c8e812e6a26b482e233f0b5d4d1f7a1808dfdad83c4",
+      "layout": {
+        "solcVersion": "0.8.16",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\security\\ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\security\\ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "_mintable",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_bool",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:31"
+          },
+          {
+            "label": "_baseURIPermanent",
+            "offset": 1,
+            "slot": "151",
+            "type": "t_bool",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:34"
+          },
+          {
+            "label": "_timestampExpirySeconds",
+            "offset": 2,
+            "slot": "151",
+            "type": "t_uint64",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:37"
+          },
+          {
+            "label": "_cosigner",
+            "offset": 10,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:40"
+          },
+          {
+            "label": "_crossmintAddress",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_address",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:43"
+          },
+          {
+            "label": "_maxMintableSupply",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_uint256",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:46"
+          },
+          {
+            "label": "_globalWalletLimit",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_uint256",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:49"
+          },
+          {
+            "label": "_currentBaseURI",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_string_storage",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:52"
+          },
+          {
+            "label": "_tokenURISuffix",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_string_storage",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:55"
+          },
+          {
+            "label": "_mintStages",
+            "offset": 0,
+            "slot": "157",
+            "type": "t_array(t_struct(MintStageInfo)4405_storage)dyn_storage",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:58"
+          },
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "158",
+            "type": "t_bool",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:61"
+          },
+          {
+            "label": "_stageMintedCountsPerWallet",
+            "offset": 0,
+            "slot": "159",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint32))",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:64"
+          },
+          {
+            "label": "_stageMintedCounts",
+            "offset": 0,
+            "slot": "160",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:68"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(MintStageInfo)4405_storage)dyn_storage": {
+            "label": "struct IERC721M.MintStageInfo[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint32)": {
+            "label": "mapping(address => uint32)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_uint32))": {
+            "label": "mapping(uint256 => mapping(address => uint32))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(MintStageInfo)4405_storage": {
+            "label": "struct IERC721M.MintStageInfo",
+            "members": [
+              {
+                "label": "price",
+                "type": "t_uint80",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "walletLimit",
+                "type": "t_uint32",
+                "offset": 10,
+                "slot": "0"
+              },
+              {
+                "label": "merkleRoot",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "maxStageSupply",
+                "type": "t_uint24",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "startTimeUnixSeconds",
+                "type": "t_uint64",
+                "offset": 3,
+                "slot": "2"
+              },
+              {
+                "label": "endTimeUnixSeconds",
+                "type": "t_uint64",
+                "offset": 11,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint24": {
+            "label": "uint24",
+            "numberOfBytes": "3"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          },
+          "t_uint80": {
+            "label": "uint80",
+            "numberOfBytes": "10"
+          }
+        }
+      }
+    },
+    "f8a514bf1ca6de61d4bd5a15037dad3e5213ec859bae346b463e55ffbf9c160d": {
+      "address": "0xe3cd7EC716B3782404627E706e78DaB7cE199307",
+      "txHash": "0x2b8f327e77265467a34e786e3aa92bbf0ca3d61d4f96d166e05b00599a9532a9",
+      "layout": {
+        "solcVersion": "0.8.16",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\security\\ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\security\\ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "_mintable",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_bool",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:31"
+          },
+          {
+            "label": "_baseURIPermanent",
+            "offset": 1,
+            "slot": "151",
+            "type": "t_bool",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:34"
+          },
+          {
+            "label": "_timestampExpirySeconds",
+            "offset": 2,
+            "slot": "151",
+            "type": "t_uint64",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:37"
+          },
+          {
+            "label": "_cosigner",
+            "offset": 10,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:40"
+          },
+          {
+            "label": "_crossmintAddress",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_address",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:43"
+          },
+          {
+            "label": "_maxMintableSupply",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_uint256",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:46"
+          },
+          {
+            "label": "_globalWalletLimit",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_uint256",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:49"
+          },
+          {
+            "label": "_currentBaseURI",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_string_storage",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:52"
+          },
+          {
+            "label": "_tokenURISuffix",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_string_storage",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:55"
+          },
+          {
+            "label": "_mintStages",
+            "offset": 0,
+            "slot": "157",
+            "type": "t_array(t_struct(MintStageInfo)6022_storage)dyn_storage",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:58"
+          },
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "158",
+            "type": "t_bool",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:61"
+          },
+          {
+            "label": "_stageMintedCountsPerWallet",
+            "offset": 0,
+            "slot": "159",
+            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint32))",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:64"
+          },
+          {
+            "label": "_stageMintedCounts",
+            "offset": 0,
+            "slot": "160",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "ERC721M",
+            "src": "contracts\\ERC721M.sol:68"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(MintStageInfo)6022_storage)dyn_storage": {
+            "label": "struct IERC721M.MintStageInfo[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint32)": {
+            "label": "mapping(address => uint32)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_uint32))": {
+            "label": "mapping(uint256 => mapping(address => uint32))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(MintStageInfo)6022_storage": {
+            "label": "struct IERC721M.MintStageInfo",
+            "members": [
+              {
+                "label": "price",
+                "type": "t_uint80",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "walletLimit",
+                "type": "t_uint32",
+                "offset": 10,
+                "slot": "0"
+              },
+              {
+                "label": "merkleRoot",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "maxStageSupply",
+                "type": "t_uint24",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "startTimeUnixSeconds",
+                "type": "t_uint64",
+                "offset": 3,
+                "slot": "2"
+              },
+              {
+                "label": "endTimeUnixSeconds",
+                "type": "t_uint64",
+                "offset": 11,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint24": {
+            "label": "uint24",
+            "numberOfBytes": "3"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          },
+          "t_uint80": {
+            "label": "uint80",
+            "numberOfBytes": "10"
+          }
+        }
+      }
+    }
+  }
+}

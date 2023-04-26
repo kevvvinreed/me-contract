@@ -176,8 +176,7 @@ async function index(
 
       await erc20Deploy(args, hre);
     }
-    case '3Deploy': {
-      const NETWORK = 'goerli';
+    case '3Deploy': { 
 
       const erc721Args: IDeployParams = {
         name: 'KSHTest',
@@ -406,7 +405,7 @@ async function index(
       };
 
       // const erc721Address = await deploy(erc721Args, hre);
-      const erc721Address = '0x121Bd433a482E79b74a0A7BB6b27DAB08E947dA1';
+      const erc721Address = '0xe3cd7EC716B3782404627E706e78DaB7cE199307';
       console.log(`Implementation contract address: ${erc721Address}`);
       try {
         console.log(
@@ -470,7 +469,7 @@ async function index(
         ContractDetails.ERC721M.name,
       );
       await hre.upgrades.upgradeProxy(
-        '0x529dF17Bd9264B2379643684E8663175FF534616',
+        '0xeFE7756209ca6329006B305515562a0b15e89371',
         ERC721M,
         { kind: 'transparent' },
       );

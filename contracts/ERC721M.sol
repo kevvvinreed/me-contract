@@ -57,6 +57,9 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
     // Mint stage infomation. See MintStageInfo for details.
     MintStageInfo[] private _mintStages;
 
+    // Whether contract has been initialized
+    bool private _initialized;
+
     // Minted count per stage per wallet.
     mapping(uint256 => mapping(address => uint32))
         private _stageMintedCountsPerWallet;
@@ -99,7 +102,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         __Ownable_init();
 
         if (globalWalletLimit > maxMintableSupply) {
-            revert GlobalWalletLimitOverflow(); 
+            revert GlobalWalletLimitOverflow("GlobalWalletLimitOverflow"); 
         }
 
         _mintable = false;
@@ -108,13 +111,14 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         _tokenURISuffix = tokenURISuffix;
         _cosigner = cosigner; // ethers.constants.AddressZero for no cosigning
         _timestampExpirySeconds = timestampExpirySeconds;
+        _initialized = true;
     }
 
     /**
      * @dev Returns whether mintable.
      */
     modifier canMint() {
-        if (!_mintable) revert NotMintable();
+        if (!_mintable) revert NotMintable("NotMintable");
         _;
     }
 
@@ -122,7 +126,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
      * @dev Returns whether NOT mintable.
      */
     modifier cannotMint() {
-        if (_mintable) revert Mintable();
+        if (_mintable) revert Mintable("Mintable");
         _;
     }
 
@@ -130,9 +134,16 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
      * @dev Returns whether it has enough supply for the given qty.
      */
     modifier hasSupply(uint256 qty) {
-        if (totalSupply() + qty > _maxMintableSupply) revert NoSupplyLeft();
+        if (totalSupply() + qty > _maxMintableSupply) revert NoSupplyLeft("NoSupplyLeft");
         _;
     }
+
+    /**
+     * @dev Returns whether contract has been initialized
+     */
+    function isInitialized() external view returns (bool) {
+        return _initialized;
+    } 
 
     /**
      * @dev Returns cosigner address.
@@ -222,7 +233,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
                     newStages[i].startTimeUnixSeconds <
                     newStages[i - 1].endTimeUnixSeconds + timestampExpirySeconds
                 ) {
-                    revert InsufficientStageTimeGap();
+                    revert InsufficientStageTimeGap("InsufficientStageTimeGap");
                 }
             }
             _assertValidStartAndEndTimestamp(
@@ -291,7 +302,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         onlyOwner
     {
         if (maxMintableSupply > _maxMintableSupply) {
-            revert CannotIncreaseMaxMintableSupply();
+            revert CannotIncreaseMaxMintableSupply("CannotIncreaseMaxMintableSupply");
         }
         _maxMintableSupply = maxMintableSupply;
         emit SetMaxMintableSupply(maxMintableSupply);
@@ -312,7 +323,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         onlyOwner
     {
         if (globalWalletLimit > _maxMintableSupply)
-            revert GlobalWalletLimitOverflow();
+            revert GlobalWalletLimitOverflow("GlobalWalletLimitOverflow");
         _globalWalletLimit = globalWalletLimit;
         emit SetGlobalWalletLimit(globalWalletLimit);
     }
@@ -363,14 +374,14 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         uint64 startTimeUnixSeconds,
         uint64 endTimeUnixSeconds
     ) external onlyOwner {
-        if (index >= _mintStages.length) revert InvalidStage();
+        if (index >= _mintStages.length) revert InvalidStage("InvalidStage");
         if (index >= 1) {
             if (
                 startTimeUnixSeconds <
                 _mintStages[index - 1].endTimeUnixSeconds +
                     getTimestampExpirySeconds()
             ) {
-                revert InsufficientStageTimeGap();
+                revert InsufficientStageTimeGap("InsufficientStageTimeGap");
             }
         }
         _assertValidStartAndEndTimestamp(
@@ -410,11 +421,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         bytes calldata signature
     ) external payable nonReentrant {
         _mintInternal(qty, _msgSender(), proof, timestamp, signature);
-    }
-
-    // function test() external payable nonReentrant {
-    //     emit Test(_msgSender());
-    // }
+    } 
 
     /**
      * @dev Mints token(s) through crossmint. This function is supposed to be called by crossmint.
@@ -432,10 +439,10 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         uint64 timestamp,
         bytes calldata signature
     ) external payable nonReentrant {
-        if (_crossmintAddress == address(0)) revert CrossmintAddressNotSet();
+        if (_crossmintAddress == address(0)) revert CrossmintAddressNotSet("CrossmintAddressNotSet");
 
         // Check the caller is Crossmint
-        if (_msgSender() != _crossmintAddress) revert CrossmintOnly();
+        if (_msgSender() != _crossmintAddress) revert CrossmintOnly("CrossmintOnly");
 
         _mintInternal(qty, to, proof, timestamp, signature);
     }
@@ -464,18 +471,18 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         stage = _mintStages[activeStage];
 
         // Check value
-        if (msg.value < stage.price * qty) revert NotEnoughValue();
+        if (msg.value < stage.price * qty) revert NotEnoughValue("NotEnoughValue");
 
         // Check stage supply if applicable
         if (stage.maxStageSupply > 0) {
             if (_stageMintedCounts[activeStage] + qty > stage.maxStageSupply)
-                revert StageSupplyExceeded();
+                revert StageSupplyExceeded("StageSupplyExceeded");
         }
 
         // Check global wallet limit if applicable
         if (_globalWalletLimit > 0) {
             if (_numberMinted(to) + qty > _globalWalletLimit)
-                revert WalletGlobalLimitExceeded();
+                revert WalletGlobalLimitExceeded("WalletGlobalLimitExceeded");
         }
 
         // Check wallet limit for stage if applicable, limit == 0 means no limit enforced
@@ -483,7 +490,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
             if (
                 _stageMintedCountsPerWallet[activeStage][to] + qty >
                 stage.walletLimit
-            ) revert WalletStageLimitExceeded();
+            ) revert WalletStageLimitExceeded("WalletStageLimitExceeded");
         }
 
         // Check merkle proof if applicable, merkleRoot == 0x00...00 means no proof required
@@ -493,7 +500,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
                     proof,
                     keccak256(abi.encodePacked(to))
                 ) != stage.merkleRoot
-            ) revert InvalidProof();
+            ) revert InvalidProof("InvalidProof");
         }
 
         _stageMintedCountsPerWallet[activeStage][to] += qty;
@@ -521,7 +528,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
     function withdraw() external onlyOwner {
         uint256 value = address(this).balance;
         (bool success, ) = _msgSender().call{value: value}("");
-        if (!success) revert WithdrawFailed();
+        if (!success) revert WithdrawFailed("WithdrawFailed");
         emit Withdraw(value);
     }
 
@@ -529,7 +536,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
      * @dev Sets token base URI.
      */
     function setBaseURI(string calldata baseURI) external onlyOwner {
-        if (_baseURIPermanent) revert CannotUpdatePermanentBaseURI();
+        if (_baseURIPermanent) revert CannotUpdatePermanentBaseURI("CannotUpdatePermanentBaseURI");
         _currentBaseURI = baseURI;
         emit SetBaseURI(baseURI);
     }
@@ -593,7 +600,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         uint32 qty,
         uint64 timestamp
     ) public view returns (bytes32) {
-        if (_cosigner == address(0)) revert CosignerNotSet();
+        if (_cosigner == address(0)) revert CosignerNotSet("CosignerNotSet");
         return
             keccak256(
                 abi.encodePacked(
@@ -623,7 +630,28 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
                 getCosignDigest(minter, qty, timestamp),
                 signature
             )
-        ) revert InvalidCosignSignature();
+        ) revert InvalidCosignSignature("InvalidCosignSignature");
+    }
+
+    /**
+     * @dev timestamp 
+     */
+    function verifyCosign(
+        address minter,
+        uint32 qty,
+        uint64 timestamp,
+        bytes memory signature
+    ) public view returns (bool) {
+         if (
+            !SignatureChecker.isValidSignatureNow(
+                _cosigner,
+                getCosignDigest(minter, qty, timestamp),
+                signature
+            )
+        ) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -643,7 +671,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
                 return i;
             }
         }
-        revert InvalidStage();
+        revert InvalidStage("InvalidStage");
     }
 
     /**
@@ -651,7 +679,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
      */
     function _assertValidTimestamp(uint64 timestamp) internal view {
         if (timestamp < block.timestamp - getTimestampExpirySeconds())
-            revert TimestampExpired();
+            revert TimestampExpired("TimestampExpired");
     }
 
     /**
@@ -661,7 +689,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         internal
         pure
     {
-        if (start >= end) revert InvalidStartAndEndTimestamp();
+        if (start >= end) revert InvalidStartAndEndTimestamp("InvalidStartAndEndTimestamp");
     }
 
     /**

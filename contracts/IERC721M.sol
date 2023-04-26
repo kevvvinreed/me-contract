@@ -4,27 +4,27 @@ pragma solidity ^0.8.4;
 import "erc721a-upgradeable/contracts/extensions/IERC721AQueryableUpgradeable.sol";
 
 interface IERC721M is IERC721AQueryableUpgradeable {
-    error CannotIncreaseMaxMintableSupply();
-    error CannotUpdatePermanentBaseURI();
-    error CosignerNotSet();
-    error CrossmintAddressNotSet();
-    error CrossmintOnly();
-    error GlobalWalletLimitOverflow();
-    error InsufficientStageTimeGap();
-    error InvalidCosignSignature();
-    error InvalidProof();
-    error InvalidStage();
-    error InvalidStageArgsLength();
-    error InvalidStartAndEndTimestamp();
-    error NoSupplyLeft();
-    error NotEnoughValue();
-    error NotMintable();
-    error Mintable();
-    error StageSupplyExceeded();
-    error TimestampExpired();
-    error WalletGlobalLimitExceeded();
-    error WalletStageLimitExceeded();
-    error WithdrawFailed(); 
+    error CannotIncreaseMaxMintableSupply(string msg);
+    error CannotUpdatePermanentBaseURI(string msg);
+    error CosignerNotSet(string msg);
+    error CrossmintAddressNotSet(string msg);
+    error CrossmintOnly(string msg);
+    error GlobalWalletLimitOverflow(string msg);
+    error InsufficientStageTimeGap(string msg);
+    error InvalidCosignSignature(string msg);
+    error InvalidProof(string msg);
+    error InvalidStage(string msg);
+    error InvalidStageArgsLength(string msg);
+    error InvalidStartAndEndTimestamp(string msg);
+    error NoSupplyLeft(string msg);
+    error NotEnoughValue(string msg);
+    error NotMintable(string msg);
+    error Mintable(string msg);
+    error StageSupplyExceeded(string msg);
+    error TimestampExpired(string msg);
+    error WalletGlobalLimitExceeded(string msg);
+    error WalletStageLimitExceeded(string msg);
+    error WithdrawFailed(string msg);  
 
     struct MintStageInfo {
         uint80 price;
