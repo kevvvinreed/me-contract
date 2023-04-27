@@ -108,7 +108,8 @@ async function index(
     | '2Deploy'
     | 'proxyDeploy'
     | 'initImplementation'
-    | 'upgradeImplementation',
+    | 'upgradeImplementation'
+    | 'verifyImplementation',
 ) {
   switch (opt) {
     case 'deploy': {
@@ -404,22 +405,7 @@ async function index(
         isProxy: true,
       };
 
-      // const erc721Address = await deploy(erc721Args, hre);
-      const erc721Address = '0xe3cd7EC716B3782404627E706e78DaB7cE199307';
-      console.log(`Implementation contract address: ${erc721Address}`);
-      try {
-        console.log(
-          `\x1b[33mVerifying implementation contract (${erc721Address})\x1b[0m`,
-        );
-        hre.run('verify:verify', {
-          address: erc721Address,
-          name: 'ERC721M',
-        });
-      } catch (error) {
-        console.log(
-          `\x1b[31mFailed to verify implementation contract (${erc721Args})\x1b[0m`,
-        );
-      }
+      const erc721Address = await deploy(erc721Args, hre); 
       return;
     }
     case 'initImplementation': {
@@ -469,12 +455,47 @@ async function index(
         ContractDetails.ERC721M.name,
       );
       await hre.upgrades.upgradeProxy(
-        '0xeFE7756209ca6329006B305515562a0b15e89371',
+        '0xcb2d67953E0DBbA97bf86c6Ad97429654400252F',
         ERC721M,
         { kind: 'transparent' },
       );
       return;
     }
+    case 'verifyImplementation': { 
+      const erc721Args: IDeployParams = {
+        name: 'KSHTest',
+        symbol: 'KSHT',
+        tokenurisuffix: '.json',
+        maxsupply: 1000,
+        globalwalletlimit: 1000,
+        timestampexpiryseconds: 300,
+        cosigner:
+          process.env.COSIGNER || '0x2142F2AC9759B5E6f4165BBd40cCE5E7dbCDB49a',
+        isProxy: true,
+      };
+
+      //0xDbB525d985115F0a52C16d828bA2A86c96f115CF admin contract
+
+      const erc721Address = '0xdc17c2B4CF6e819CECA1632e1B0E39773a7dcC63';
+
+      console.log(`Implementation contract address: ${erc721Address}`);
+      try {
+        console.log(
+          `\x1b[33mVerifying implementation contract (${erc721Address})\x1b[0m`,
+        );
+        hre.run('verify:verify', {
+          address: erc721Address,
+          name: 'ERC721M',
+        });
+      } catch (error) {
+        console.log(
+          `\x1b[31mFailed to verify implementation contract (${erc721Args})\x1b[0m`,
+        );
+      }
+    }
   }
 }
-index('proxyDeploy');
+
+// index('initImplementation');
+index('verifyImplementation');
+// index('upgradeImplementation');

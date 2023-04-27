@@ -421,7 +421,7 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
         bytes calldata signature
     ) external payable nonReentrant {
         _mintInternal(qty, _msgSender(), proof, timestamp, signature);
-    } 
+    }  
 
     /**
      * @dev Mints token(s) through crossmint. This function is supposed to be called by crossmint.
@@ -446,6 +446,63 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
 
         _mintInternal(qty, to, proof, timestamp, signature);
     }
+ 
+    // function testMint(
+    //     uint32 qty,
+    //     bytes32[] calldata proof,
+    //     uint64 timestamp,
+    //     bytes calldata signature
+    // ) external payable nonReentrant canMint hasSupply(qty) {
+    //     address to = _msgSender();
+    //     uint64 stageTimestamp = uint64(block.timestamp);
+        
+    //     MintStageInfo memory stage;
+    //     if (_cosigner != address(0)) {
+    //         assertValidCosign(to, qty, timestamp, signature);
+    //         _assertValidTimestamp(timestamp);
+    //         stageTimestamp = timestamp;
+    //     }
+
+    //     uint256 activeStage = getActiveStageFromTimestamp(stageTimestamp);
+    //     stage = _mintStages[activeStage];
+
+    //     // Check value
+    //     if (msg.value < stage.price * qty) revert NotEnoughValue("NotEnoughValue");
+
+    //     // Check stage supply if applicable
+    //     if (stage.maxStageSupply > 0) {
+    //         if (_stageMintedCounts[activeStage] + qty > stage.maxStageSupply)
+    //             revert StageSupplyExceeded("StageSupplyExceeded");
+    //     }
+
+    //     // Check global wallet limit if applicable
+    //     if (_globalWalletLimit > 0) {
+    //         if (_numberMinted(to) + qty > _globalWalletLimit)
+    //             revert WalletGlobalLimitExceeded("WalletGlobalLimitExceeded");
+    //     }
+
+    //     // Check wallet limit for stage if applicable, limit == 0 means no limit enforced
+    //     if (stage.walletLimit > 0) {
+    //         if (
+    //             _stageMintedCountsPerWallet[activeStage][to] + qty >
+    //             stage.walletLimit
+    //         ) revert WalletStageLimitExceeded("WalletStageLimitExceeded");
+    //     }
+
+    //     // Check merkle proof if applicable, merkleRoot == 0x00...00 means no proof required
+    //     if (stage.merkleRoot != 0) {
+    //         if (
+    //             MerkleProof.processProof(
+    //                 proof,
+    //                 keccak256(abi.encodePacked(to))
+    //             ) != stage.merkleRoot
+    //         ) revert InvalidProof("InvalidProof");
+    //     }
+
+    //     _stageMintedCountsPerWallet[activeStage][to] += qty;
+    //     _stageMintedCounts[activeStage] += qty;
+    //     _safeMint(to, qty); 
+    // }
 
     /**
      * @dev Implementation of minting.
@@ -475,8 +532,14 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
 
         // Check stage supply if applicable
         if (stage.maxStageSupply > 0) {
-            if (_stageMintedCounts[activeStage] + qty > stage.maxStageSupply)
-                revert StageSupplyExceeded("StageSupplyExceeded");
+            if(totalSupply() == 0) { // _stageMintedCounts has not been initialized at this point
+                if(qty > stage.maxStageSupply) {
+                    revert StageSupplyExceeded("StageSupplyExceeded"); 
+                }
+            }
+            else if (_stageMintedCounts[activeStage] + qty > stage.maxStageSupply) { 
+                revert StageSupplyExceeded("StageSupplyExceeded"); 
+            } 
         }
 
         // Check global wallet limit if applicable
@@ -487,10 +550,17 @@ contract ERC721M is IERC721M, ERC721AQueryableUpgradeable, OwnableUpgradeable, R
 
         // Check wallet limit for stage if applicable, limit == 0 means no limit enforced
         if (stage.walletLimit > 0) {
-            if (
+            if(totalSupply() == 0) { // _stageMintedCountsPerWallet has not been initialized at this point
+                if(qty > stage.walletLimit) {
+                    revert WalletStageLimitExceeded("WalletStageLimitExceeded"); 
+                }
+            }
+            else if (
                 _stageMintedCountsPerWallet[activeStage][to] + qty >
                 stage.walletLimit
-            ) revert WalletStageLimitExceeded("WalletStageLimitExceeded");
+            ) { 
+                revert WalletStageLimitExceeded("WalletStageLimitExceeded");
+            }
         }
 
         // Check merkle proof if applicable, merkleRoot == 0x00...00 means no proof required
