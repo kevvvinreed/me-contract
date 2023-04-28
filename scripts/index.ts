@@ -455,7 +455,7 @@ async function index(
         ContractDetails.ERC721M.name,
       );
       await hre.upgrades.upgradeProxy(
-        '0xcb2d67953E0DBbA97bf86c6Ad97429654400252F',
+        '0xb68D92A1E7A7C413Da6f9872319bE56C3efAc242',
         ERC721M,
         { kind: 'transparent' },
       );
@@ -476,7 +476,7 @@ async function index(
 
       //0xDbB525d985115F0a52C16d828bA2A86c96f115CF admin contract
 
-      const erc721Address = '0xdc17c2B4CF6e819CECA1632e1B0E39773a7dcC63';
+      const erc721Address = '0x533f5d8195486Be578Ca6fabBc47aFDe63551764';
 
       console.log(`Implementation contract address: ${erc721Address}`);
       try {
@@ -496,6 +496,7 @@ async function index(
   }
 }
 
-// index('initImplementation');
-index('verifyImplementation');
+// index('proxyDeploy');
+index('initImplementation');
+// index('verifyImplementation');
 // index('upgradeImplementation');

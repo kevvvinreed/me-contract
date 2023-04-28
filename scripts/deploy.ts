@@ -66,9 +66,7 @@ export const deploy = async (
   let implementationAddress = undefined;
   if (args.isProxy) { 
     erc721M = await hre.upgrades.deployProxy(ERC721M, [...params], { initializer: 'initialize', kind: 'transparent' }); 
-    implementationAddress = (erc721M.deployTransaction as any).creates; 
-    console.log(`erc721M`,erc721M)
-    console.log(`implementationAddress:${implementationAddress}`)
+    implementationAddress = (erc721M.deployTransaction as any).creates;   
   }
   else { 
     erc721M = await ERC721M.deploy(...params);
