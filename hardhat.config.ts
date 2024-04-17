@@ -1,14 +1,14 @@
 import 'dotenv/config';
+require('dotenv').config();
 
-import '@nomiclabs/hardhat-etherscan';
-import '@nomiclabs/hardhat-waffle';
-import '@nomiclabs/hardhat-ethers';
+import '@nomicfoundation/hardhat-toolbox';
 import '@typechain/hardhat';
 import 'hardhat-gas-reporter';
 import 'hardhat-watcher';
 import { HardhatUserConfig, task, types } from 'hardhat/config';
 import 'solidity-coverage';
 import '@openzeppelin/hardhat-upgrades';
+import '@nomicfoundation/hardhat-verify';
 
 import { deploy } from './scripts/deploy';
 import { deployBA } from './scripts/deployBA';
@@ -38,10 +38,10 @@ import { getMinContributionInWei } from './scripts/dev/getMinContributionInWei';
 // /** @type import('hardhat/config').HardhatUserConfig */
 const config: HardhatUserConfig = {
   etherscan: {
-    apiKey: process.env.ETHERSCAN_KEY || '',
+    apiKey: process.env.ETHERSCAN_KEY || '77HB1HAY4F11PTPW1ARY5UF1XD6PHQ335H',
   },
   solidity: {
-    version: '0.8.16',
+    version: '0.8.23',
     settings: {
       optimizer: {
         enabled: true,
@@ -68,9 +68,15 @@ const config: HardhatUserConfig = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     sepolia: {
-      url: process.env.SEPOLIA_URL || '',
+      url:
+        process.env.SEPOLIA_URL ||
+        'https://eth-sepolia.g.alchemy.com/v2/eCM02-YTsZaSkAxTCdDypdNsBtoKAuu1',
       accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+        process.env.PRIVATE_KEY !== undefined
+          ? [process.env.PRIVATE_KEY]
+          : [
+              '0x3e55c11945491f1d0f21609780f21ac02ba9d578fc5b9af0171b56350e03a7e9',
+            ],
     },
     mainnet: {
       url: process.env.MAINNET_URL || '',
@@ -86,6 +92,22 @@ const config: HardhatUserConfig = {
       url: process.env.POLYGON_URL || '',
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    'base-mainnet': {
+      url: process.env.BASE_URL || '',
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    'base-sepolia': {
+      url:
+        process.env.SEPOLIA_URL ||
+        'https://base-sepolia.g.alchemy.com/v2/AzOfzHuKTCzwf7_lMVM0fGBfXbZyHzCn',
+      accounts:
+        process.env.PRIVATE_KEY !== undefined
+          ? [process.env.PRIVATE_KEY]
+          : [
+              '0x3e55c11945491f1d0f21609780f21ac02ba9d578fc5b9af0171b56350e03a7e9',
+            ],
     },
   },
   gasReporter: {

@@ -26,9 +26,9 @@ const abiDecoder = require('abi-decoder');
 const axios = require('axios');
 
 const _deploy = async (
-  isProxy: boolean = true,
-  contractName: string = 'KSHTest',
-  symbol: string = 'KSHT',
+  isProxy: boolean = false,
+  contractName: string = 'AI Inu',
+  symbol: string = 'AI',
   maxsupply: number = 1000,
   globalwalletlimit: number = 1000,
 ): Promise<string> => {
@@ -169,19 +169,35 @@ async function index(
       return;
     }
     case 'ERC20Deploy': {
-      const args: IERC20DeployParams = {
-        name: 'ERC20 Test',
-        symbol: 'ET',
+      const erc20Args: IERC20DeployParams = {
+        name: 'AI',
+        symbol: 'AI Inu',
         maxsupply: 1000000,
       };
 
-      await erc20Deploy(args, hre);
+      // const erc20Address = await erc20Deploy(erc20Args, hre);
+      const erc20Address = '0x8A3CB46b10baF3C3a14B66F94FFF0f9b12c1a7e0';
+      try {
+        console.log(`\x1b[33mVerifying ERC20 address (${erc20Address})\x1b[0m`);
+        run('verify:verify', {
+          address: erc20Address,
+          constructorArguments: [
+            erc20Args.name,
+            erc20Args.symbol,
+            erc20Args.maxsupply,
+          ],
+        });
+      } catch (error) {
+        console.log(
+          `\x1b[31mFailed to verify ERC20 address (${erc20Address})\x1b[0m`,
+        );
+      }
+      return;
     }
-    case '3Deploy': { 
-
+    case '3Deploy': {
       const erc721Args: IDeployParams = {
-        name: 'KSHTest',
-        symbol: 'KSHT',
+        name: 'AI Inu',
+        symbol: 'AI',
         tokenurisuffix: '.json',
         maxsupply: 1000,
         globalwalletlimit: 1000,
@@ -405,7 +421,7 @@ async function index(
         isProxy: true,
       };
 
-      const erc721Address = await deploy(erc721Args, hre); 
+      const erc721Address = await deploy(erc721Args, hre);
       return;
     }
     case 'initImplementation': {
@@ -461,7 +477,7 @@ async function index(
       );
       return;
     }
-    case 'verifyImplementation': { 
+    case 'verifyImplementation': {
       const erc721Args: IDeployParams = {
         name: 'KSHTest',
         symbol: 'KSHT',
@@ -476,7 +492,7 @@ async function index(
 
       //0xDbB525d985115F0a52C16d828bA2A86c96f115CF admin contract
 
-      const erc721Address = '0x533f5d8195486Be578Ca6fabBc47aFDe63551764';
+      const erc721Address = '0xf67CD2559e79355384dfFc1994E6267863d80dE5';
 
       console.log(`Implementation contract address: ${erc721Address}`);
       try {
@@ -496,7 +512,14 @@ async function index(
   }
 }
 
+index('ERC20Deploy');
 // index('proxyDeploy');
-index('initImplementation');
+// index('initImplementation');
 // index('verifyImplementation');
 // index('upgradeImplementation');
+// index('setStages');
+
+// Was stable with
+// "hardhat": "^2.12.7",
+// "@nomiclabs/hardhat-ethers": "^2.1.1",
+// "ethers": "^5.0.0"

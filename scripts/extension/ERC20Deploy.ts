@@ -3,8 +3,8 @@ import { ContractDetails } from '../common/constants';
 
 export interface IERC20DeployParams {
   name: string;
-  symbol: string; 
-  maxsupply: number; 
+  symbol: string;
+  maxsupply: number;
 }
 
 export const erc20Deploy = async (
@@ -14,7 +14,7 @@ export const erc20Deploy = async (
   // Compile again in case we have a coverage build (binary too large to deploy)
   await hre.run('compile');
 
-  let contractName: string = ContractDetails.ERC20K.name 
+  let contractName: string = ContractDetails.ERC20K.name;
 
   console.log(
     `Going to deploy ${contractName} with params`,
@@ -22,11 +22,7 @@ export const erc20Deploy = async (
   );
   const ERC20K = await hre.ethers.getContractFactory(contractName);
 
-  const params = [
-    args.name,
-    args.symbol,
-    args.maxsupply
-  ] as const;
+  const params = [args.name, args.symbol, args.maxsupply] as const;
 
   console.log(
     `Constructor params: `,
@@ -45,6 +41,6 @@ export const erc20Deploy = async (
   await erc20K.deployed();
 
   console.log(`${contractName} deployed to:`, erc20K.address);
-  
+
   return erc20K.address;
 };
